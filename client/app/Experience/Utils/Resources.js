@@ -1,11 +1,16 @@
+/* eslint-disable no-console */
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { gsap } from 'gsap';
 
 import EventEmitter from './EventEmitter';
+import Experience from '../Experience';
 
 export default class Resources extends EventEmitter {
   constructor(sources) {
     super();
+
+    this.experience = new Experience();
 
     // Options
     this.sources = sources;
@@ -15,6 +20,9 @@ export default class Resources extends EventEmitter {
     this.toLoad = this.sources.length;
     this.loaded = 0;
 
+    this.preloader = this.experience.preloader;
+    this.loadingBarElement = document.querySelector('.loading-bar');
+
     this.setLoaders();
     this.startLoading();
   }
@@ -22,9 +30,24 @@ export default class Resources extends EventEmitter {
   // Methods
   setLoaders() {
     this.loaders = {};
-    this.loaders.gltfLoader = new GLTFLoader();
-    this.loaders.textureLoader = new THREE.TextureLoader();
-    this.loaders.cubeTextureLoader = new THREE.CubeTextureLoader();
+    this.loadingManager = new THREE.LoadingManager(
+      () => {
+        gsap.delayedCall(0.5, () => {
+          gsap.to(this.preloader.items.overlayMaterial.uniforms.uAlpha, { duration: 3, value: 0, delay: 1 });
+
+          this.loadingBarElement.classList.add('ended');
+          this.loadingBarElement.style.transform = '';
+        });
+      },
+      (itemUrl, itemsLoaded, itemsTotal) => {
+        const progressRatio = itemsLoaded / itemsTotal;
+        this.loadingBarElement.style.transform = `scaleX(${progressRatio})`;
+        console.log(progressRatio);
+      },
+    );
+    this.loaders.gltfLoader = new GLTFLoader(this.loadingManager);
+    this.loaders.textureLoader = new THREE.TextureLoader(this.loadingManager);
+    this.loaders.cubeTextureLoader = new THREE.CubeTextureLoader(this.loadingManager);
   }
 
   startLoading() {

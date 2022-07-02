@@ -9,6 +9,7 @@ import Renderer from './Renderer';
 import World from './World/World';
 
 import sources from './sources';
+import Preloader from './Utils/Preloader.js';
 
 // Convert this class to a singleton
 let instance = null;
@@ -32,6 +33,7 @@ export default class Experience {
     this.sizes = new Sizes();
     this.time = new Time();
     this.scene = new THREE.Scene();
+    this.preloader = new Preloader();
     this.resources = new Resources(sources);
     this.camera = new Camera();
     this.renderer = new Renderer();
