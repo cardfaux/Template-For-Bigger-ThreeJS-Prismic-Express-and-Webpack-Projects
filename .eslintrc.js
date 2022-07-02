@@ -19,5 +19,6 @@ module.exports = {
     quotes: ['error', 'single'],
     'no-unused-vars': [2],
     'prettier/prettier': 'error',
+    'no-console': [2],
   },
 };
