@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import Experience from '../Experience.js';
 
+/* eslint-disable no-console */
+
 export default class Fox {
   constructor() {
     this.experience = new Experience();
@@ -8,6 +10,12 @@ export default class Fox {
     this.resources = this.experience.resources;
     this.time = this.experience.time;
     this.debug = this.experience.debug;
+
+    this.foxScale = {
+      x: 0.02,
+      y: 0.02,
+      z: 0.02,
+    };
 
     // Debug
     if (this.debug.active) {
@@ -23,7 +31,8 @@ export default class Fox {
 
   setModel() {
     this.model = this.resource.scene;
-    this.model.scale.set(0.02, 0.02, 0.02);
+    // this.model.scale.set(0.02, 0.02, 0.02);
+    this.model.scale.set(this.foxScale.x, this.foxScale.y, this.foxScale.z);
     this.scene.add(this.model);
 
     this.model.traverse((child) => {

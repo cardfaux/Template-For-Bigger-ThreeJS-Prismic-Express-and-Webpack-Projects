@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { gsap } from 'gsap';
@@ -23,13 +22,13 @@ export default class Resources extends EventEmitter {
     this.preloader = this.experience.preloader;
     this.loadingBarElement = document.querySelector('.loading-bar');
 
+    this.setLoadingManager();
     this.setLoaders();
     this.startLoading();
   }
 
   // Methods
-  setLoaders() {
-    this.loaders = {};
+  setLoadingManager() {
     this.loadingManager = new THREE.LoadingManager(
       () => {
         gsap.delayedCall(0.5, () => {
@@ -42,9 +41,12 @@ export default class Resources extends EventEmitter {
       (itemUrl, itemsLoaded, itemsTotal) => {
         const progressRatio = itemsLoaded / itemsTotal;
         this.loadingBarElement.style.transform = `scaleX(${progressRatio})`;
-        console.log(progressRatio);
       },
     );
+  }
+
+  setLoaders() {
+    this.loaders = {};
     this.loaders.gltfLoader = new GLTFLoader(this.loadingManager);
     this.loaders.textureLoader = new THREE.TextureLoader(this.loadingManager);
     this.loaders.cubeTextureLoader = new THREE.CubeTextureLoader(this.loadingManager);
